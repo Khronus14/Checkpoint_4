@@ -1,0 +1,182 @@
+/*
+** Some CSS settings
+*/
+
+/*
+** For video display, we select an alternate background color, and
+** remove any border around images.
+*/
+@media screen {
+	img	{
+		border-style: none
+	}
+	body	{
+		/* antique white */
+		background-color: #faebd7;
+	}
+	/*
+	** some alternate colors; see
+	**    https://www.w3schools.com/colors/colors_picker.asp
+	**    https://www.w3schools.com/colors/colors_palettes.asp
+	**    https://www.color-hex.com/
+	** for more ideas
+	*/
+	.antique {
+		background-color: #faebd7;
+	}
+	.cornsilk {
+		background-color: #fff8dc;
+	}
+	.gray91 {
+		background-color: #e8e8e8;
+	}
+	.gray95 {
+		background-color: #f2f2f2;
+	}
+	.palegreen {
+		background-color: #e6ffe6;
+	}
+	.paleblue {
+		background-color: #e6f0ff;
+	}
+	.paleorange {
+		background-color: #ffeecc;
+	}
+}
+
+/*
+** For both video display and printing, we set other
+** appearance characteristics.
+*/
+@media screen, print {
+	/* body of the document */
+	body	{
+		/* set left and right margins*/
+		margin-left: 2%;
+		margin-right: 2%;
+		background-image: none;
+	}
+	/* figures and their captions */
+	figure, figcaption {
+		font-style: italic;
+		font-size: smaller;
+	}
+	/* h3 entries with class="emph" */
+	h3.emph	{
+		font-style: italic;
+		font-weight: normal;
+	}
+	/* some table settings */
+	table.crunch {
+		/* thin, non-printing borders */
+		border-collapse: collapse;
+		border-width: 0px 0;
+	}
+	table.std {
+		/* one-pixel black border */
+		border-collapse: collapse;
+		border-width: 1px 0;
+	}
+	td.boxed {
+		/* border around one data cell */
+		border: 1px 0;
+	}
+	.collapsed {
+		border-collapse: collapse;
+		border-style: solid;
+		border-width: 1px 0;
+	}
+	/* boxes around things like divisions, paragraphs, etc. */
+	.boxed	{
+		border: 1px solid black;
+		padding-left: .2em;
+		padding-right: .2em
+	}
+	.redbox	{
+		border: 2px solid red;
+		padding-left: .2em;
+		padding-right: .2em
+	}
+	.codebox	{
+		font-family: monospace;
+		border: 1px solid black;
+		padding-left: .2em;
+		padding-right: .2em
+	}
+	.termbox	{
+		font-style: italic;
+		border: 1px solid black;
+		padding-left: .2em;
+		padding-right: .2em
+	}
+	/* turn off underlining of anchors */
+	a.noline	{
+		text-decoration: none;
+	}
+	/* font sizes */
+	.smallest {
+		font-size: x-small;
+	}
+	.smaller {
+		font-size: smaller;
+	}
+	.small {
+		font-size: small;
+	}
+	.largest {
+		font-size: x-large;
+	}
+	.larger {
+		font-size: larger;
+	}
+	.large {
+		font-size: large;
+	}
+	/* decorations for text */
+	.uline	{
+		text-decoration: underline;
+	}
+	.oline	{
+		text-decoration: overline;
+	}
+	.strike	{
+		text-decoration: line-through;
+	}
+	/* alignment of text */
+	.top	{
+		vertical-align: top;
+	}
+	.middle	{
+		vertical-align: middle;
+	}
+	.bottom	{
+		vertical-align: bottom;
+	}
+	.center	{
+		text-align: center;
+	}
+	.left	{
+		text-align: left;
+	}
+	.right	{
+		text-align: right;
+	}
+	/* some common settings for text blocks */
+	.option	{
+		text-align: center;
+		font-family: monospace;
+	}
+	.code	{
+		font-family: monospace;
+	}
+	/* list variations */
+	ol.ua	{
+		list-style-type: upper-alpha;
+	}
+	ol.la	{
+		list-style-type: lower-alpha;
+	}
+	li.separator {
+		border_bottom: 1px solid black;
+	}
+}
