@@ -98,7 +98,7 @@ class Quad extends anObject {
         this.createVertices(platformCenter, platformXScale, platformYScale);
         this.width = platformXScale;
         this.height = platformYScale;
-        // this.arrayGoL = this.buildGoL();
+        this.GoL = this.buildGoL();
         // this.counter = 0; // debug
     }
 
@@ -232,10 +232,51 @@ class Quad extends anObject {
 
     buildGoL(intersectionPoint) {
         // +2 length is to prevent out of bounds when updating GoL
-        let GoL = new Array(12 + 2);
-        for (let col = 0; col < GoL.length; col++) {
-            GoL[col] = new Array(24 + 2);
+        let GoL = new Array(24 + 2);
+        for (let row = 0; row < GoL.length; row++) {
+            GoL[row] = new Array(12 + 2);
         }
+        // GoL[row][col]
+        GoL[1][2] = 1;
+        GoL[2][3] = 1;
+        GoL[3][1] = 1;
+        GoL[3][2] = 1;
+        GoL[3][3] = 1;
+        return GoL;
+    }
+
+    updateGoL() {
+        // rules
+        // live cell with two or three live neighbours survives.
+        // dead cell with three live neighbours becomes a live cell.
+        // other live cells die in the next generation; all other dead cells stay dead.
+        let tempGoL = new Array(24 + 2);
+        for (let row = 0; row < tempGoL.length; row++) {
+            tempGoL[row] = new Array(12 + 2);
+        }
+        let neighborTotal = 0;
+
+        for (let row = 1; row < this.GoL.length - 1; row++) {
+            for (let col = 1; this.GoL[0].length - 1; col++) {
+                neighborTotal += this.GoL[row - 1][col - 1];
+                neighborTotal += this.GoL[row - 1][col];
+                neighborTotal += this.GoL[row - 1][col + 1];
+                neighborTotal += this.GoL[row][col - 1];
+                neighborTotal += this.GoL[row][col + 1];
+                neighborTotal += this.GoL[row + 1][col - 1];
+                neighborTotal += this.GoL[row + 1][col];
+                neighborTotal += this.GoL[row + 1][col + 1];
+
+                if ((this.GoL[row][col] === 0 && neighborTotal === 3) ||
+                    (this.GoL[row][col] === 1 &&
+                        neighborTotal === 2 || neighborTotal === 3)) {
+                    tempGoL[row][col] = 1;
+                } else {
+                    tempGoL[row][col] = 0;
+                }
+            }
+        }
+        this.GoL = tempGoL;
     }
 }
 
