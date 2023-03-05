@@ -21,7 +21,7 @@ function buildGoL() {
     // GoL[3][3] = 1;
 
     // pulsar by row
-    let rowStart = 15;
+    let rowStart = 16;
     GoL[rowStart][4] = 1;
     GoL[rowStart][5] = 1;
     GoL[rowStart][6] = 1;

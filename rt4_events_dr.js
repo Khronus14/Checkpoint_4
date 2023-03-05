@@ -50,6 +50,9 @@ function gotKey (event) {
         multiLights = 0;
         superSample = 0;
         useGoL = false;
+        if (intervalID !== null) {
+            clearInterval(intervalID);
+        }
         startRender();
     }
 }
