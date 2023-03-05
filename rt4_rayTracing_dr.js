@@ -159,6 +159,7 @@ function rayTrace() {
     }
 }
 
+// used in super-sampling
 function getRay(sample, delta, camPOS, xCoord, yCoord, zCoord) {
     switch (sample) {
         case 1:

@@ -1,4 +1,126 @@
 import {Point, ImagePlane, Color} from "./rt4_AuxObjects_dr.js";
+import {useGoL} from "./rt4_events_dr.js";
+
+let GoL;
+
+function buildGoL() {
+    GoL = new Array(40 + 2);
+    for (let row = 0; row < GoL.length; row++) {
+        let temp = new Array(15 + 2);
+        for (let i = 0; i < temp.length; i++) {
+            temp[i] = 0;
+        }
+        GoL[row] = temp;
+    }
+    // GoL[row][col]
+    // single glider
+    // GoL[1][2] = 1;
+    // GoL[2][3] = 1;
+    // GoL[3][1] = 1;
+    // GoL[3][2] = 1;
+    // GoL[3][3] = 1;
+
+    // pulsar by row
+    let rowStart = 15;
+    GoL[rowStart][4] = 1;
+    GoL[rowStart][5] = 1;
+    GoL[rowStart][6] = 1;
+    GoL[rowStart][10] = 1;
+    GoL[rowStart][11] = 1;
+    GoL[rowStart][12] = 1;
+
+    GoL[rowStart + 2][2] = 1;
+    GoL[rowStart + 2][7] = 1;
+    GoL[rowStart + 2][9] = 1;
+    GoL[rowStart + 2][14] = 1;
+
+    GoL[rowStart + 3][2] = 1;
+    GoL[rowStart + 3][7] = 1;
+    GoL[rowStart + 3][9] = 1;
+    GoL[rowStart + 3][14] = 1;
+
+    GoL[rowStart + 4][2] = 1;
+    GoL[rowStart + 4][7] = 1;
+    GoL[rowStart + 4][9] = 1;
+    GoL[rowStart + 4][14] = 1;
+
+    GoL[rowStart + 5][4] = 1;
+    GoL[rowStart + 5][5] = 1;
+    GoL[rowStart + 5][6] = 1;
+    GoL[rowStart + 5][10] = 1;
+    GoL[rowStart + 5][11] = 1;
+    GoL[rowStart + 5][12] = 1;
+
+    GoL[rowStart + 7][4] = 1;
+    GoL[rowStart + 7][5] = 1;
+    GoL[rowStart + 7][6] = 1;
+    GoL[rowStart + 7][10] = 1;
+    GoL[rowStart + 7][11] = 1;
+    GoL[rowStart + 7][12] = 1;
+
+    GoL[rowStart + 8][2] = 1;
+    GoL[rowStart + 8][7] = 1;
+    GoL[rowStart + 8][9] = 1;
+    GoL[rowStart + 8][14] = 1;
+
+    GoL[rowStart + 9][2] = 1;
+    GoL[rowStart + 9][7] = 1;
+    GoL[rowStart + 9][9] = 1;
+    GoL[rowStart + 9][14] = 1;
+
+    GoL[rowStart + 10][2] = 1;
+    GoL[rowStart + 10][7] = 1;
+    GoL[rowStart + 10][9] = 1;
+    GoL[rowStart + 10][14] = 1;
+
+    GoL[rowStart + 12][4] = 1;
+    GoL[rowStart + 12][5] = 1;
+    GoL[rowStart + 12][6] = 1;
+    GoL[rowStart + 12][10] = 1;
+    GoL[rowStart + 12][11] = 1;
+    GoL[rowStart + 12][12] = 1;
+}
+
+function updateGoL() {
+    // rules
+    // live cell with two or three live neighbours survives.
+    // dead cell with three live neighbours becomes a live cell.
+    // other live cells die in the next generation; all other dead cells stay dead.
+    let tempGoL = new Array(GoL.length);
+    for (let row = 0; row < tempGoL.length; row++) {
+        let temp = new Array(GoL[0].length);
+        for (let i = 0; i < temp.length; i++) {
+            temp[i] = 0;
+        }
+        tempGoL[row] = temp;
+    }
+
+    // let tempGoL = this.GoL;
+    let neighborTotal = 0;
+
+    for (let row = 1; row < GoL.length - 1; row++) {
+        for (let col = 1; col < GoL[0].length - 1; col++) {
+            neighborTotal += GoL[row - 1][col - 1];
+            neighborTotal += GoL[row - 1][col];
+            neighborTotal += GoL[row - 1][col + 1];
+            neighborTotal += GoL[row][col - 1];
+            neighborTotal += GoL[row][col + 1];
+            neighborTotal += GoL[row + 1][col - 1];
+            neighborTotal += GoL[row + 1][col];
+            neighborTotal += GoL[row + 1][col + 1];
+
+            if ((GoL[row][col] === 0 && neighborTotal === 3) ||
+                (GoL[row][col] === 1 &&
+                    (neighborTotal === 2 || neighborTotal === 3))) {
+                tempGoL[row][col] = 1;
+            } else {
+                tempGoL[row][col] = 0;
+            }
+            neighborTotal = 0;
+        }
+    }
+    GoL = tempGoL;
+}
 
 class World {
     constructor(imageDimension, planeOrigin, cameraPOS, lookat, up) {
@@ -92,13 +214,11 @@ class Quad extends anObject {
     vertices;
     width;
     height;
-    arrayGoL;
     constructor(illumModel, objectColor, platformCenter, platformXScale, platformYScale) {
         super(illumModel, objectColor);
         this.createVertices(platformCenter, platformXScale, platformYScale);
         this.width = platformXScale;
         this.height = platformYScale;
-        this.GoL = this.buildGoL();
         // this.counter = 0; // debug
     }
 
@@ -218,65 +338,29 @@ class Quad extends anObject {
     getColor(intersectionPoint) {
         let xCoord = Math.abs(this.vertices[4][0]) + intersectionPoint[0];
         let zCoord = Math.abs(this.vertices[4][2]) + intersectionPoint[2];
-        let checkSize = this.width / 12;
+        let checkSize;
+        if (useGoL) {
+            checkSize = this.width / 15;
+        } else {
+            checkSize = this.width / 12;
+        }
 
         let col = Math.floor(xCoord / checkSize);
         let row = Math.floor(zCoord / checkSize);
 
-        if ((row + col) % 2 === 0) {
-            return new Color([1.0, 0.0, 0.0]);
+        if (useGoL) {
+            if (GoL[row + 1][col + 1] === 0) {
+                return new Color([0.1, 0.1, 0.1]);
+            } else {
+                return new Color([0.8, 0.6, 0.1]);
+            }
         } else {
-            return new Color([1.0, 1.0, 0.0]);
-        }
-    }
-
-    buildGoL(intersectionPoint) {
-        // +2 length is to prevent out of bounds when updating GoL
-        let GoL = new Array(24 + 2);
-        for (let row = 0; row < GoL.length; row++) {
-            GoL[row] = new Array(12 + 2);
-        }
-        // GoL[row][col]
-        GoL[1][2] = 1;
-        GoL[2][3] = 1;
-        GoL[3][1] = 1;
-        GoL[3][2] = 1;
-        GoL[3][3] = 1;
-        return GoL;
-    }
-
-    updateGoL() {
-        // rules
-        // live cell with two or three live neighbours survives.
-        // dead cell with three live neighbours becomes a live cell.
-        // other live cells die in the next generation; all other dead cells stay dead.
-        let tempGoL = new Array(24 + 2);
-        for (let row = 0; row < tempGoL.length; row++) {
-            tempGoL[row] = new Array(12 + 2);
-        }
-        let neighborTotal = 0;
-
-        for (let row = 1; row < this.GoL.length - 1; row++) {
-            for (let col = 1; this.GoL[0].length - 1; col++) {
-                neighborTotal += this.GoL[row - 1][col - 1];
-                neighborTotal += this.GoL[row - 1][col];
-                neighborTotal += this.GoL[row - 1][col + 1];
-                neighborTotal += this.GoL[row][col - 1];
-                neighborTotal += this.GoL[row][col + 1];
-                neighborTotal += this.GoL[row + 1][col - 1];
-                neighborTotal += this.GoL[row + 1][col];
-                neighborTotal += this.GoL[row + 1][col + 1];
-
-                if ((this.GoL[row][col] === 0 && neighborTotal === 3) ||
-                    (this.GoL[row][col] === 1 &&
-                        neighborTotal === 2 || neighborTotal === 3)) {
-                    tempGoL[row][col] = 1;
-                } else {
-                    tempGoL[row][col] = 0;
-                }
+            if ((row + col) % 2 === 0) {
+                return new Color([1.0, 0.0, 0.0]);
+            } else {
+                return new Color([1.0, 1.0, 0.0]);
             }
         }
-        this.GoL = tempGoL;
     }
 }
 
@@ -301,4 +385,4 @@ class LightSource {
     }
 }
 
-export {World, Sphere, Quad, Camera, LightSource};
+export {buildGoL, updateGoL, World, Sphere, Quad, Camera, LightSource};

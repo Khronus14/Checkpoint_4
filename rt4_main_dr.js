@@ -1,6 +1,7 @@
 import {fShaderSource, vShaderSource} from "./rt4_shaderCode_dr.js";
-import {altView, gotKey} from "./rt4_events_dr.js";
+import {altView, useGoL, gotKey} from "./rt4_events_dr.js";
 import {buildScene, theWorld} from "./rt4_rayTracing_dr.js";
+import {updateGoL} from "./rt4_Objects_dr.js";
 
 let gl, program, imPlane;
 let imageDimension = 300;
@@ -100,6 +101,8 @@ function startRender() {
 
     // draw the scene
     drawScene();
+
+    if (useGoL) updateGoL();
 
     // miscellaneous code to test/verify output values, etc.
     // testAndDebug();
